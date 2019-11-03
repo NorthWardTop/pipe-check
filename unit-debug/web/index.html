@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>基于HTML5查找地理位置并调用百度API展示</title>
+    <style>
+        #container{
+            width:580px;
+            height:700px;
+            border: 10px solid #000;
+            border-radius: 30px;
+            margin:0 auto;
+            font-size:20px;
+            text-align: center;
+            padding-top:30px;
+            box-sizing: border-box;
+        }
+       #content{
+           width:100%;
+           height:580px;
+           border-top: 5px solid #000;
+           padding:10px 0 10px 0;
+        }
+        #map{
+            width:500px;
+            height:500px;
+            margin:0 auto;
+            background-color: #cccccc;
+            line-height:500px;
+            font-size:20px;
+            border: 2px solid #ccc;
+        }
+        #box{
+            width:100%;
+            height:50px;
+            margin-bottom:30px;
+            display: inline-block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+        <div id="content">
+            <div id="map">按跑步开始按钮即可开始记录跑步轨迹</div>
+            <span id="box"></span>
+        </div>
+    <button onclick="getLocation()">跑步开始</button>
+    <button onclick="stop()">跑步结束</button>
+</div>
+
+    <script src="http://api.map.baidu.com/api?v=1.2"></script>
+    <script>
+
+        var box=document.getElementById("box");//获取元素
+        var timer=null;//定时器标识
+        var map;//地图实例
+        var startLong;//起始点经度
+        var startLat ;//起始点纬度
+        var endLong ;//终止点经度
+        var endLat ;//终止点纬度
+        var x;//跑步开始前的定位经度
+        var y;//跑步开始前的定位纬度
+        var marker; //标注
+        var endmarker; //自定义的终点标注图标
+
+        /* 调用HTML5 GeoLocation API获取地理位置*/
+        function getLocation(){
+            document.getElementById("map").innerHTML='正在搜寻中，请稍候......';
+            var options={
+                enableHighAccuracy:true, //设置浏览器获取高精度的位置
+                maximumAge:1000, //重新获得位置的时间间隔
+                timeout:10000 //超时时间
+            };
+            if(navigator.geolocation){
+                //获取当前位置信息
+                navigator.geolocation.getCurrentPosition(showPosition,showError,options);
+            }else{
+                box.innerHTML="对不起，您的浏览器不支持HTML5地理定位API";
+            }
+        }
+
+        /* 获取位置信息成功函数*/
+        function  showPosition(position) {
+
+            var longitude = position.coords.longitude;     // 经度
+            var latitude = position.coords.latitude; // 纬度
+
+            //定位不准确，自己调整
+            x = longitude + 0.0115;
+            y = latitude + 0.004;
+
+            endLong = x;//当前位置经度
+            endLat = y;//当前位置纬度
+
+            map = new BMap.Map("map");// 使用百度地图API创建地图实例
+            var point = new BMap.Point(x, y);// 创建一个坐标
+            map.centerAndZoom(point, 30); // 地图初始化，设置中心点坐标和地图级别
+
+            //创建跑步开始的起点标注
+            var startmarker = new BMap.Marker(point, {
+                icon: new BMap.Icon("./icons/start.png", new BMap.Size(32,32))//使用自定义的标注图标
+            });
+            map.addOverlay(startmarker); //将当前定位标注添加到地图中
+            //监听定位标注的点击事件
+            startmarker.addEventListener("click", function () {
+                alert("经度:" + endLong + ", 纬度:" + endLat);
+            });
+
+            //向地图中添加滚轮（可放大缩小）控件
+            map.enableScrollWheelZoom(true);
+            //向地图中添加缩放控件
+            var ctrlNav = new window.BMap.NavigationControl({
+                anchor: BMAP_ANCHOR_TOP_LEFT,
+                type: BMAP_NAVIGATION_CONTROL_LARGE
+            });
+            map.addControl(ctrlNav);
+
+            //向地图中添加缩略图控件
+            var ctrlOve = new window.BMap.OverviewMapControl({
+                anchor: BMAP_ANCHOR_BOTTOM_RIGHT,
+                isOpen: 1
+            });
+            map.addControl(ctrlOve);
+
+            //向地图中添加比例尺控件
+            var ctrlSca = new window.BMap.ScaleControl({
+                anchor: BMAP_ANCHOR_BOTTOM_LEFT
+            });
+            map.addControl(ctrlSca);
+
+            /*跑步开始*/
+                clearInterval(timer);//为了防止定时器效果叠加,先清除定时器
+                //设置定时器
+                timer =setInterval(function(){
+                    //当前位置，即将成为旧轨迹的终止点的经纬度作为新轨迹的起始点经纬度
+                    startLong = endLong;
+                    startLat = endLat;
+
+                    //显示当前位置信息
+                    box.innerHTML =  "当前时间：" +  new Date().toLocaleString()+"<br/>所处经度：" +  startLong + "<br/>所处纬度：" + startLat + "<br/>";
+
+                    //取定位点的附近的随机经纬度作为新轨迹的终点经纬度，代替获取的实时位置
+                    endLong = getRound(endLong);
+                    endLat = getRound(endLat);
+
+                    //绘制标注
+                    drawIcon(startLong,startLat,endLong,endLat);
+                },1000);
+        }
+
+        /*取定位点附近的随机经纬度的函数*/
+        function getRound(temp){
+            var i = Math.round(Math.random()*9+1);//取1-10之间的随机数
+            if(i%2===0){ //偶数
+                return temp + i*0.00001;
+            }else{ //奇数
+                return temp - i*0.00001;
+            }
+        }
+
+        /*绘制轨迹连线函数*/
+        function drawLine(startLong,startLat,endLong,endLat){
+            var polyline = new BMap.Polyline(
+                [
+                    new BMap.Point(startLong,startLat),//起始点的经纬度
+                    new BMap.Point(endLong,endLat)//终止点的经纬度
+                ],
+                {
+                    strokeColor:"green",//设置颜色
+                    strokeWeight:3, //宽度
+                    strokeOpacity:1 //透明度
+                }
+            );
+            map.addOverlay(polyline);//显示轨迹连线
+        }
+
+
+        /*绘制定位的标注*/
+        function drawIcon(startLong,startLat,endLong,endLat){
+            map.removeOverlay(endmarker);//清除之前的终点标注图标
+
+            //去掉旧轨迹的终止点的标注，第一次按跑步开始按钮清除的是跑步开始前的定位标注
+            if(marker){
+                map.removeOverlay(marker);
+            }
+
+            //在新轨迹的起始点处创建新标注
+            marker = new BMap.Marker(
+                new BMap.Point(endLong,endLat),//旧轨迹的终止点，即新轨迹的起始点
+                {
+                    icon:new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23,25), { //标注图标
+                        imageOffset: new BMap.Size(0, -275)
+                    })
+                });
+            map.addOverlay(marker); //显示标注
+
+            //绘制轨迹
+            drawLine(startLong,startLat,endLong,endLat);
+
+        }
+
+        /*位置信息获取失败函数*/
+        function showError(error){
+            switch(error.code){
+                case error.PERMISSION_DENIED:box.innerHTML="用户拒绝了您的请求";break;
+                case error.POSITION_UNAVAILABLE:box.innerHTML="位置信息不可用";break;
+                case error.TIMEOUT:box.innerHTML="请求超时";break;
+                case error.UNKNOWN_ERR:box.innerHTML="未知错误发生";break;
+            }
+        }
+
+
+        /*停止跑步按钮的点击事件函数*/
+        function stop(){
+            clearInterval(timer); //清除定时器
+            box.innerHTML="跑步停止，实时位置更新已停止<br/>";
+            //创建终点标注
+            endmarker = new BMap.Marker( new BMap.Point(endLong,endLat) ,//当前终止点
+                {
+                icon:new BMap.Icon("./icons/end.png", new BMap.Size(32,32))//使用自定义的标注图标
+                }
+            );
+            map.addOverlay(endmarker); //将终点标注添加到地图中
+
+        }
+
+    </script>
+</body>
+</html>

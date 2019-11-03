@@ -1,0 +1,123 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+		body, html {width: 100%;height: 100%; margin:0;font-family:"微软雅黑";}
+		#allmap{height:800px;width:100%;}
+		#r-result,#r-result table{width:100%;}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=Xqeeln357P3OzOduiuRGINE9jHqXpsBq"></script>
+	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+	<title>根据起终点名称驾车导航</title>
+</head>
+<body>
+	<div id="allmap"></div>
+
+	<div>
+	</div> 
+
+	<div id="driving_way">
+		开始: <input type="text" id="startPoint" /></br>
+		<!-- <select>
+			<option value="0">最少时间</option>
+			<option value="1">最短距离</option>
+			<option value="2">避开高速</option>
+		</select> -->
+		结束: <input type="text" id="endPoint" /></br>
+		<!-- <input type="button" id="result" value="查询"/></br> -->
+		<input type="button" value="获取路径和坐标" onclick="query()" /></br>
+		<textarea id="shuchu" rows="35"></textarea>
+	</div>
+	<div id="r-result"></div>
+	<div id="container"></div>
+</body>
+</html>
+<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");
+	// var start = "杨家坪地铁站";
+	// var end = "谢家湾地铁站-B口";
+	var point = new BMap.Point(106.521116,29.515381);  // 创建点坐标  
+	map.centerAndZoom(point, 15);                 // 初始化地图，设置中心点坐标和地图级别 
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+	var list = new Array();
+	map.addEventListener("click",function(e){
+		// alert(e.point.lng + "," + e.point.lat);
+		console.log(e.point.lng + "," + e.point.lat);
+		list.push(e.point.lng + "," + e.point.lat);
+		console.log(list);
+	});
+	//三种驾车策略：最少时间，最短距离，避开高速
+	var routePolicy = [BMAP_DRIVING_POLICY_LEAST_TIME,BMAP_DRIVING_POLICY_LEAST_DISTANCE,BMAP_DRIVING_POLICY_AVOID_HIGHWAYS];
+	$("#result").click(function(){
+		map.clearOverlays(); 
+		var i=$("#driving_way select").val();
+		search(start,end,routePolicy[i]);
+		console.log(routePolicy[i])
+		function search(start,end,route){ 
+			var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true},policy: route});
+			driving.search(start,end);
+		}
+	});
+
+
+var shuchu=document.getElementById("shuchu");
+// var traffic=new BMap.TrafficLayer();
+// map.addTileLayer(traffic);
+map.addControl(new BMap.NavigationControl());    
+map.addControl(new BMap.ScaleControl());    
+map.addControl(new BMap.OverviewMapControl());    
+map.addControl(new BMap.MapTypeControl());    
+map.setCurrentCity("重庆"); // 仅当设置城市信息时，MapTypeControl的切换功能才能可用
+var myIcon=new BMap.Icon("land.png",new BMap.Size(23, 25));      
+// var marker = new BMap.Marker(point,{icon:myIcon});        // 创建标注此时添加的为默认标注    
+// map.addOverlay(marker);                     // 将标注添加到地图中
+// marker.addEventListener("click", function(){    
+//  alert("click");   
+
+// });
+
+// marker.enableDragging();    				//可拖拽的标注
+// marker.addEventListener("dragend", function(e){    
+//  	alert("rightnow" + e.point.lng + ", " + e.point.lat);    
+// })
+function query(){
+	var start=document.getElementById("startPoint").value;
+	var end= document.getElementById("endPoint").value;
+	//var start = "杨家坪地铁站";
+	//var end = "谢家湾地铁站-B口";
+	// var starts=start.split(',');//.toArray();
+	// start=new BMap.Point(starts[0],starts[1]);
+	// var ends=end.split(',');//.toArray();
+	// end=new BMap.Point(ends[0],ends[1]);
+	var routePolicy = [BMAP_DRIVING_POLICY_LEAST_TIME,BMAP_DRIVING_POLICY_LEAST_DISTANCE,BMAP_DRIVING_POLICY_AVOID_HIGHWAYS];
+	var driving = new BMap.DrivingRoute(map, {renderOptions:{map: map, autoViewport: true},policy: routePolicy});
+
+	driving.search(start, end);
+
+	driving.setSearchCompleteCallback(function(results){
+	 if (driving.getStatus() == BMAP_STATUS_SUCCESS){    
+	 	var firstplan=results.getPlan(0);
+	 	for(var i=0;i<firstplan.getNumRoutes();i++){
+	 		var drive=firstplan.getRoute(i);
+	 		if(drive.getDistance(false)>0){
+					 drive.getPath().forEach(function(e){
+						shuchu.innerHTML+="\'"+e.lng+","+e.lat+"\',\n";
+	 			});		
+	 		}
+	 	}
+	 }
+})
+}
+
+	// var points=driving.getResults().getRoute(0).getPlan(0).getPath();
+	// points.forEach(function(e){
+	// 	shuchu.innerHTML+=point.lng+","+point.lat+"</br>";
+	// });
+
+
+
+
+
+</script>

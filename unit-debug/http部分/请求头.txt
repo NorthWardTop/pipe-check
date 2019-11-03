@@ -1,0 +1,18 @@
+POST /tencent-cos-php/upload.php HTTP/1.1
+Host: 127.0.0.1
+Connection: keep-alive
+Content-Length: 32788
+Cache-Control: max-age=0
+Origin: http://127.0.0.1
+Upgrade-Insecure-Requests: 1
+DNT: 1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryfuSBUtModYXmBrnx
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3
+Sec-Fetch-Site: same-origin
+Referer: http://127.0.0.1/tencent-cos-php/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6
+Cookie: auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MSwiYWRtaW4iOnRydWUsImFsbG93Q29tbWFuZHMiOnRydWUsImFsbG93RWRpdCI6dHJ1ZSwiYWxsb3dOZXciOnRydWUsImFsbG93UHVibGlzaCI6dHJ1ZSwibG9ja1Bhc3N3b3JkIjpmYWxzZSwiY29tbWFuZHMiOlsiZ2l0Iiwic3ZuIl0sImNzcyI6IiIsImxvY2FsZSI6InpoLWNuIiwicGFzc3dvcmQiOiIiLCJydWxlcyI6W10sImZpbGVzeXN0ZW0iOiJEOi8vIiwidXNlcm5hbWUiOiJhZG1pbiIsInZpZXdNb2RlIjoibGlzdCIsImV4cCI6MTU2NjQ3NTUzOSwiaXNzIjoiRmlsZSBCcm93c2VyIn0.YqTAevYMpKnyvoRhOIzigv_2yoCBnmPG4kitjx_Nm_w

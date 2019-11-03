@@ -1,0 +1,60 @@
+header{
+background-color:black ;
+text-align: center;
+padding: 5px;
+border-radius:8px;
+}
+h1{
+	color:white;
+	text-align: center;
+}
+h2{
+	text-align: center;
+}
+body{
+	background-color: #DDDDDD;
+}
+body{	
+	text-align: center;
+	padding: 5px;
+	height:100%
+}
+img {
+	border-radius: 8px;
+	width:100%;
+	height:auto;
+}
+input[type=text],input[type=password]{
+	width:30%;
+	padding:12px 20px;
+	margin:8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+}
+button{
+	background-color: black ;
+	color: white;
+	padding:14px 20px;
+	width:30%;
+	border-radius:8px;
+}
+p{
+	font-family:"Times New Roman", Times, serif;
+}
+div{
+	margin:0 auto;
+	width:400px;
+	height:200px;
+	
+}
+footer {
+    background-color:black;
+    border-radius:8px;
+    color:white;
+    clear:both;
+    text-align:center;
+    margin-top: 400px;
+
+  }  
+
+

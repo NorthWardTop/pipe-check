@@ -1,0 +1,63 @@
+<!DOCTYPE Html>
+<head>
+	<meta content="charset=utf-8"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="../Controle/Inscription.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="index.css" type="text/css" />
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	</head>
+
+<div class="top">
+	<img src="projet.jpg">
+</div>
+
+<header>
+	<h1>Bienvenue</h1>
+	</header>
+
+<body>
+	
+	<Sign>
+		<h2>Veuillez remplir les formulaires</h2>
+
+<div class="user">
+<form id="forminscription" action="../Controle/Inscription.php" method="post" style="display:none">
+		
+		<label for="user">User:</label>
+		<input type="text" id="nomutilisateur" name="nomutilisateur" placeholder="Saisir ton nom.">
+		<br>
+				
+		<label for ="pwd">Mot de passe:</label>
+		<input type="password"  id= "mdp" name="mdp" placeholder="Saisir ton mot de passe.">
+		<br>
+		
+		<label for = "verifmot">Comfirmer mot de passe:</label>
+		<input type="password" name="verifmot" id="verifmot" placeholder="Resaisir ton mot de passe">
+		<br>
+
+		<button type="button"  id="creer" onclick="CreerUser();">Inscrire</button>
+		<p>J'ai deja de compte. <a href="#" id="getformlogin" onclick="showP(2)">Login</a></p>
+		</form>
+
+<form id="formlogin" action="../Controle/Inscription.php" method="post">
+		
+		<label for="user">User:</label>
+		<input type="text"  id="nomutilisateurlogin" name="nomutilisateurlogin" placeholder="Saisir ton nom.">
+		<br>	
+		<label for ="pwd">Mot de passe:</label>
+		<input type="password"  id= "mdplogin" name="mdplogin" placeholder="Saisir ton mot de passe.">
+		<br>
+		
+		<button type="button" id="login" onclick="Login();">Login</button></a>
+		<p>Vous navez pas de compte? <a href="#" id="getforminscription" onclick="showP(1)">Inscription</a></p>
+        
+		</form>
+	</div>
+	</Sign>
+
+	</body>	
+	<footer>
+	yaqi.zheng&yu.yang
+	</footer>
+	</html>
+

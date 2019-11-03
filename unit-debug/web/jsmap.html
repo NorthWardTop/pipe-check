@@ -1,0 +1,109 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>jsMap</title>
+	<style type="text/css">
+		body, html{width: 100%;height: 100%;margin:0;font-family:"jsMap";}
+		#map_canvas{width:100%;height:500px;}
+		#result {width:100%}
+	</style>
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=k72UOssK73WMyWoCIZfGLAeh"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/LuShu/1.2/src/LuShu_min.js"></script>
+</head>
+<body>
+<div id="map_canvas"></div>
+<div id="result"></div>
+<button id="run">开始</button>
+<button id="stop">停止</button>
+<button id="pause">暂停</button>
+<button id="hide">隐藏信息窗口</button>
+<button id="show">展示信息窗口</button>
+
+<script>
+	var map = new BMap.Map('map_canvas');
+	var point = new BMap.Point(116.404, 39.915);
+	var point1 = new BMap.Point(116.404, 39.935);
+	var point2 = new BMap.Point(116.404, 39.905);
+	var point3 = new BMap.Point(116.424, 39.915);
+	var point4 = new BMap.Point(116.414, 39.925);
+	var pointArr = [];
+	var lushu;
+
+
+	map.enableScrollWheelZoom();
+	map.centerAndZoom(point, 16);
+
+	setTimeout(function(){
+		var convertor = new BMap.Convertor();
+		var pointArr = [];
+		pointArr.push(point);
+		pointArr.push(point1);
+		pointArr.push(point2);
+		pointArr.push(point3);
+		pointArr.push(point4);
+		convertor.translate(pointArr, 1, 5, translateCallback);
+	}, 1000);
+
+	//坐标转换完之后的回调函数
+	translateCallback = function (data){
+
+		if(data.status === 0) {
+
+			for (var i = 0; i < data.points.length ; i++) {
+				addMarker(data.points[i]);
+			};
+			drive(data.points);
+
+		}
+
+
+	}
+
+	function drive(datas){
+		map.addOverlay(new BMap.Polyline(datas, {strokeColor: 'green'}));
+		map.setViewport(datas);
+
+		lushu = new BMapLib.LuShu(map,datas,{
+			defaultContent:"",
+			autoView:true,
+			icon  : new BMap.Icon('http://developer.baidu.com/map/jsdemo/img/car.png', new BMap.Size(52,26),{anchor : new BMap.Size(27, 13)}),
+			speed: 4500,
+			enableRotation:true,
+			landmarkPois: [
+			]});
+	}
+
+
+	$("run").onclick = function(){
+		lushu.start();
+	}
+	$("pause").onclick = function() {
+		lushu.pause();
+	}
+	function $(element){
+		return document.getElementById(element);
+	}
+
+	// 编写自定义函数,创建标注
+	function addMarker(point){
+
+		var marker = new BMap.Marker(point);
+
+		var opts = {
+			position : point,    // 指定文本标注所在的地理位置
+			offset   : new BMap.Size(30, -30)    //设置文本偏移量
+		}
+		var label = new BMap.Label("文本标注哦~", opts);  // 创建文本标注对象
+		label.setStyle({
+			color : "red",
+			fontSize : "12px",
+			height : "20px",
+			lineHeight : "20px",
+			fontFamily:"微软雅黑"
+		});
+		marker.setLabel(label);
+		map.addOverlay(marker);
+	}
+</script>
+</body>
+</html> 

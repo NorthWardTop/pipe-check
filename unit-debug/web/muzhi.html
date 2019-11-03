@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<style type="text/css">
+	body, html,#allmap {width: 100%;height: 80%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+	</style>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=vV22rRRBUQAtmYTEzP1eBrKSABDNXGGN"></script>
+	<title>MuZhi</title>
+
+<script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js">
+</script>
+
+<script>
+$(document).ready(function(){
+  function(){
+    $("#div1").load("data.json",function(responseTxt,statusTxt,xhr){
+      if(statusTxt=="success")
+        alert("外部内容加载成功!");
+      if(statusTxt=="error")
+        alert("Error: "+xhr.status+": "+xhr.statusText);
+    });
+  };
+});
+</script>
+
+</head>
+<body>
+	<div id="allmap"></div>
+	<div id="div1"></div>
+</body>
+</html>
+<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap",{mapType: BMAP_HYBRID_MAP});    // 创建Map实例
+	map.centerAndZoom("西安",15);      // 初始化地图,用城市名设置地图中心点
+	//map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);  // 初始化地图,设置中心点坐标和地图级别
+	//添加地图类型控件
+	/*map.addControl(new BMap.MapTypeControl({
+		mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));	*/  
+	//map.setCurrentCity("重庆");          // 设置地图显示的城市 此项是必须设置的
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+
+
+
+	function addMarker(point){
+	  var marker = new BMap.Marker(point);
+	  map.addOverlay(marker);
+	}
+
+
+	var bounds = map.getBounds();
+	var sw = bounds.getSouthWest();
+	var ne = bounds.getNorthEast();
+	
+	var point = new BMap.Point(116.404, 39.915);
+
+
+	addMarker(point);
+</script>
